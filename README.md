@@ -30,7 +30,7 @@
 
 日志监控报警系统设计如下：
 
-![日志监控报警系统.png](https://www.processon.com/view/link/5a13dd14e4b049e7f5005606)
+![日志监控报警系统.png](http://on-img.com/chart_image/5a13dd13e4b0d53d979b9cec.png)
 
 日志监控报警系统开发计划：
 
