@@ -5,6 +5,9 @@ from configparser import ConfigParser
 base_config = ConfigParser()
 base_config.read('/home/chengtao/mihawk/config.ini')
 
+# mysql 配置
+mysql_config = base_config['mysql']
+
 # elasticsearch 配置
 elastic_config = base_config['elasticsearch']
 
