@@ -12,7 +12,7 @@ from mihawk.snippets.airflow import default_args
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 
-log_name = 'changba_response'
+log_name = 'ttgwm_response'
 
 
 dag = DAG(
@@ -41,12 +41,13 @@ def func(dag, *args, **kwargs):
 
     for key, value in mapping.items():
         assert key in properties.keys()
+        print(value['type'], properties[key]['type'])
         assert value['type'] == properties[key]['type']
     return response
 
 
 dsl = {
-    'index': 'log_name',
+    'index': log_name,
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
