@@ -10,7 +10,7 @@ from mihawk.snippets.airflow import default_args
 
 
 table = LogMapping
-log_name = 'changba_user_action'
+log_name = 'ttgwm_user_action'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 

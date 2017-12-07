@@ -4,15 +4,14 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from mihawk.snippets import dbapi
-from mihawk.models.logs import Logs
+from mihawk.models.log_mapping import LogMapping
 from mihawk.snippets.elastic import elastic_query
 from mihawk.snippets.airflow import default_args
 
 
+table = LogMapping
+log_name = 'yijiupi_user_action'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
-
-
-log_name = 'ttgwm_user_action'
 
 
 dag = DAG(
@@ -33,14 +32,15 @@ def func(dag, *args, **kwargs):
     response = elastic_query(index, query_type, query_body)
     properties = response[index]['mappings'][index]['properties']
 
-    logs = Logs(log_index=index,
-                time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
-                params=params,
-                response=response)
-    dbapi.commit(logs)
+    log_mapping = table(log_index=index,
+                        time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
+                        params=params,
+                        response=response)
+    dbapi.commit(log_mapping)
 
     for key, value in mapping.items():
         assert key in properties.keys()
+        print(value['type'], properties[key]['type'])
         assert value['type'] == properties[key]['type']
     return response
 
@@ -50,7 +50,7 @@ dsl = {
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
-            'actionTime': {'type': 'long'},
+            'actionTime': {'type': 'keyword'},
             'actionTimeStd': {'type': 'date'},
         }
     }

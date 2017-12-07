@@ -10,7 +10,7 @@ from mihawk.snippets.airflow import default_args
 
 
 table = LogMapping
-log_name = 'changba_user_action'
+log_name = 'ttgwm_response'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 
@@ -40,6 +40,7 @@ def func(dag, *args, **kwargs):
 
     for key, value in mapping.items():
         assert key in properties.keys()
+        print(value['type'], properties[key]['type'])
         assert value['type'] == properties[key]['type']
     return response
 
@@ -49,8 +50,8 @@ dsl = {
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
-            'actionTime': {'type': 'keyword'},
-            'actionTimeStd': {'type': 'date'},
+            'responseTime': {'type': 'long'},
+            'responseTimeStd': {'type': 'date'},
         }
     }
 }

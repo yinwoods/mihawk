@@ -4,20 +4,20 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from mihawk.snippets import dbapi
-from mihawk.models.log_mapping import LogMapping
+from mihawk.models.log_speed import LogSpeed
 from mihawk.snippets.elastic import elastic_query
 from mihawk.snippets.airflow import default_args
 
 
-table = LogMapping
-log_name = 'changba_user_action'
+table = LogSpeed
+log_name = 'yijiupi_user_action'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 
 dag = DAG(
-    dag_id=log_name+'_mapping',
+    dag_id=log_name+'_speed',
     default_args=default_args,
-    schedule_interval='@daily'
+    schedule_interval='@hourly'
 )
 
 
@@ -27,32 +27,26 @@ def func(dag, *args, **kwargs):
     index = params['index']
     query_type = params['query_type']
     query_body = params['query_body']
-    mapping = query_body['mapping']
-
     response = elastic_query(index, query_type, query_body)
-    properties = response[index]['mappings'][index]['properties']
 
-    log_mapping = table(log_index=index,
-                        time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
-                        params=params,
-                        response=response)
-    dbapi.commit(log_mapping)
+    log_speed = table(log_index=index,
+                      time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
+                      params=params,
+                      response=response)
 
-    for key, value in mapping.items():
-        assert key in properties.keys()
-        assert value['type'] == properties[key]['type']
-    return response
+    # 先保存当前count
+    # 拿到最新的count
+    # 用当前count与最新的count进行比较
+    result = dbapi.latest_record(index, table)
+    dbapi.commit(log_speed)
+    latest_count = result.get('count')
+    assert response.get('count') > latest_count
 
 
 dsl = {
     'index': log_name,
-    'query_type': 'mapping',
-    'query_body': {
-        'mapping': {
-            'actionTime': {'type': 'keyword'},
-            'actionTimeStd': {'type': 'date'},
-        }
-    }
+    'query_type': 'count',
+    'query_body': {}
 }
 
 

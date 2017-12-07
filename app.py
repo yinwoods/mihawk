@@ -6,6 +6,8 @@ from apistar.backends import sqlalchemy_backend
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 
+from mihawk.snippets.common import mysql_config
+
 
 Base = declarative_base()
 
@@ -44,7 +46,7 @@ def change_rule(rule_id: str):
 
 settings = {
     "DATABASE": {
-        "URL": "",
+        "URL": mysql_config['sql_alchemy_conn'],
         "METADATA": Base.metadata
     }
 }
@@ -60,7 +62,12 @@ routes_table = [
     Include('/static', static_urls)
 ]
 
-app = App(routes=routes_table)
+app = App(
+    routes=routes_table,
+    settings=settings,
+    commands=sqlalchemy_backend.commands,
+    components=sqlalchemy_backend.components
+)
 
 
 if __name__ == '__main__':

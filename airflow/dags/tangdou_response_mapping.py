@@ -10,7 +10,7 @@ from mihawk.snippets.airflow import default_args
 
 
 table = LogMapping
-log_name = 'changba_user_action'
+log_name = 'tangdou_response'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 
@@ -49,8 +49,8 @@ dsl = {
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
-            'actionTime': {'type': 'keyword'},
-            'actionTimeStd': {'type': 'date'},
+            'responseTime': {'type': 'long'},
+            'responseTimeStd': {'type': 'date'},
         }
     }
 }
