@@ -10,7 +10,7 @@ from mihawk.snippets.airflow import default_args
 
 
 table = LogSpeed
-log_name = 'yijiupi_user_action'
+log_name = 'lespark_user_action'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 
@@ -38,10 +38,10 @@ def func(dag, *args, **kwargs):
     # 先保存当前count
     # 拿到最新的count
     # 用当前count与最新的count进行比较
-    result = dbapi.latest_record(index, table)
+    # result = dbapi.latest_record(index, table)
     dbapi.commit(log_speed)
-    latest_count = result.get('count')
-    assert response.get('count') > latest_count
+    # latest_count = result.get('count')
+    # assert response.get('count') > latest_count
 
 
 dsl = {

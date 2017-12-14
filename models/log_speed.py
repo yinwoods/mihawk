@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, TIMESTAMP, JSON
+from sqlalchemy import Column, String, TIMESTAMP, JSON, Integer
 
 
 Base = declarative_base()
@@ -11,3 +11,4 @@ class LogSpeed(Base):
     time = Column(TIMESTAMP, nullable=False, primary_key=True)
     params = Column(JSON)
     response = Column(JSON)
+    record_count = Column(Integer, nullable=False, default=0)

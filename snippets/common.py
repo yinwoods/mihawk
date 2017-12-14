@@ -8,8 +8,8 @@ base_config.read('/home/chengtao/mihawk/config.ini')
 # mysql 配置
 mysql_config = base_config['mysql']
 
-# elasticsearch 配置
-elastic_config = base_config['elasticsearch']
+# elasticsearch配置
+elastic_config = base_config['elastic']
 
 # 邮箱配置
 mail_config = base_config['mail']

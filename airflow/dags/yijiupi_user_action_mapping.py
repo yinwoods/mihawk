@@ -40,7 +40,6 @@ def func(dag, *args, **kwargs):
 
     for key, value in mapping.items():
         assert key in properties.keys()
-        print(value['type'], properties[key]['type'])
         assert value['type'] == properties[key]['type']
     return response
 
@@ -50,7 +49,7 @@ dsl = {
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
-            'actionTime': {'type': 'keyword'},
+            'actionTime': {'type': 'long'},
             'actionTimeStd': {'type': 'date'},
         }
     }
