@@ -30,7 +30,7 @@ def func(dag, *args, **kwargs):
     mapping = query_body['mapping']
 
     response = elastic_query(index, query_type, query_body)
-    properties = response[index]['mappings'][index]['properties']
+    properties = response[index]['mappings']['doc']['properties']
 
     log_mapping = table(log_index=index,
                         time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
@@ -49,7 +49,8 @@ dsl = {
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
-            'responseTimeStd': {'type': 'date'},
+            'responseTime': {'type': 'long'},
+            'responseTimeStd': {'type': 'keyword'},
         }
     }
 }

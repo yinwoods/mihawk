@@ -67,14 +67,14 @@ def test_elastic_query_search():
 
 
 def test_elastic_query_get_index():
-    index = 'lespark_user_action'
+    index = 'changba_response'
     res = elastic_query(index, query_type='mapping',
                         query_body={})
     assert index in res
     assert 'mappings' in res[index]
     assert 'doc' in res[index]['mappings']
     assert 'properties' in res[index]['mappings']['doc']
-    assert 'actionTime' in res[index]['mappings']['doc']['properties']
+    assert 'responseTime' in res[index]['mappings']['doc']['properties']
 
 
 if __name__ == '__main__':

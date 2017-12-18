@@ -28,20 +28,21 @@ def func(dag, *args, **kwargs):
     query_type = params['query_type']
     query_body = params['query_body']
     response = elastic_query(index, query_type, query_body)
+    record_count = response.get('count', 0)
 
     log_speed = table(log_index=index,
                       time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
                       params=params,
                       response=response,
-                      record_count=response['count'])
+                      record_count=record_count)
 
     # 先保存当前count
     # 拿到最新的count
     # 用当前count与最新的count进行比较
     result = dbapi.latest_record(index, table)
     dbapi.commit(log_speed)
-    latest_count = result.get('count')
-    assert response.get('count') > latest_count
+    last_record_count = result.get('count')
+    assert record_count > last_record_count
 
 
 dsl = {
