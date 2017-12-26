@@ -2,7 +2,8 @@ from mihawk.snippets.alert import send_mail
 
 
 def test_send_mail():
-    send_mail(rule_name='1', message='2', receiver='yinchengtao@4paradigm.com')
+    response = send_mail(title='apistar test', message='test', receiver='yinchengtao@4paradigm.com')
+    print(response)
 
 
 if __name__ == '__main__':

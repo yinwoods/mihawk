@@ -4,7 +4,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from mihawk.snippets import dbapi
-from mihawk.models.log_speed import LogSpeed
+from mihawk.models.mihawk import LogSpeed
 from mihawk.snippets.elastic import elastic_query
 from mihawk.snippets.airflow import default_args
 
@@ -29,7 +29,6 @@ def func(dag, *args, **kwargs):
     query_body = params['query_body']
     response = elastic_query(index, query_type, query_body)
     record_count = response.get('count', 0)
-    print(record_count)
 
     log_speed = table(log_index=index,
                       time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
@@ -42,7 +41,6 @@ def func(dag, *args, **kwargs):
     # 用当前count与最新的count进行比较
     result = dbapi.latest_record(index, table)
     dbapi.commit(log_speed)
-    print(result)
     last_record_count = result.get('count')
     assert record_count > last_record_count
 

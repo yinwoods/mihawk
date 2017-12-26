@@ -4,18 +4,18 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from mihawk.snippets import dbapi
-from mihawk.models.mihawk import LogMapping
+from mihawk.models.mihawk import LogSpeed
 from mihawk.snippets.elastic import elastic_query
 from mihawk.snippets.airflow import default_args
 
 
-table = LogMapping
-log_name = 'changba_response'
+table = LogSpeed
+log_name = 'lespark_feed_latency'
 default_args.update({'email': 'yinchengtao@4paradigm.com'})
 
 
 dag = DAG(
-    dag_id=log_name+'_mapping',
+    dag_id=log_name+'_speed',
     default_args=default_args,
     schedule_interval='@daily'
 )
@@ -27,32 +27,28 @@ def func(dag, *args, **kwargs):
     index = params['index']
     query_type = params['query_type']
     query_body = params['query_body']
-    mapping = query_body['mapping']
-
     response = elastic_query(index, query_type, query_body)
-    properties = response[index]['mappings']['doc']['properties']
+    record_count = response.get('count', 0)
 
-    log_mapping = table(log_index=index,
-                        time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
-                        params=params,
-                        response=response)
-    dbapi.commit(log_mapping)
+    log_speed = table(log_index=index,
+                      time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
+                      params=params,
+                      response=response,
+                      record_count=record_count)
 
-    for key, value in mapping.items():
-        assert key in properties.keys()
-        assert value['type'] == properties[key]['type']
-    return response
+    # 先保存当前count
+    # 拿到最新的count
+    # 用当前count与最新的count进行比较
+    result = dbapi.latest_record(index, table)
+    dbapi.commit(log_speed)
+    last_record_count = result.get('count')
+    assert record_count > last_record_count
 
 
 dsl = {
     'index': log_name,
-    'query_type': 'mapping',
-    'query_body': {
-        'mapping': {
-            'responseTime': {'type': 'long'},
-            'responseTimeStd': {'type': 'date'},
-        }
-    }
+    'query_type': 'count',
+    'query_body': {}
 }
 
 

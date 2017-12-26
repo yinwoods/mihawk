@@ -4,7 +4,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from mihawk.snippets import dbapi
-from mihawk.models.log_mapping import LogMapping
+from mihawk.models.mihawk import LogMapping
 from mihawk.snippets.elastic import elastic_query
 from mihawk.snippets.airflow import default_args
 
@@ -38,7 +38,6 @@ def func(dag, *args, **kwargs):
                         response=response)
     dbapi.commit(log_mapping)
 
-    print(properties)
     for key, value in mapping.items():
         assert key in properties.keys()
         assert value['type'] == properties[key]['type']
@@ -51,7 +50,7 @@ dsl = {
     'query_body': {
         'mapping': {
             'actionTime': {'type': 'long'},
-            'actionTimeStd': {'type': 'keyword'},
+            'actionTimeStd': {'type': 'date'},
         }
     }
 }

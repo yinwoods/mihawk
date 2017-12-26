@@ -2,22 +2,62 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from mihawk.snippets.common import mysql_config
+from mihawk.snippets.common import mihawk_config
+from mihawk.snippets.common import falcon_portal_config
+from mihawk.snippets.common import uic_config
+
+from mihawk.models.falcon_portal import Template
+from mihawk.models.falcon_portal import Action
+
+from mihawk.models.uic import Team
+from mihawk.models.uic import RelTeamUser
+from mihawk.models.uic import User
 
 
-engine = create_engine(mysql_config['sql_alchemy_conn'], echo=True)
+mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'])
+falcon_portal_engine = create_engine(falcon_portal_config['sql_alchemy_conn'])
+uic_engine = create_engine(uic_config['sql_alchemy_conn'])
 
 
 def commit(log):
-    session = Session(bind=engine)
+    session = Session(bind=mihawk_engine)
     session.add(log)
     session.commit()
     session.close()
 
 
 def latest_record(log_index, table):
-    session = Session(bind=engine)
+    session = Session(bind=mihawk_engine)
     assert 'time' in table.__dict__
     assert 'log_index' in table.__dict__
     return session.query(table).order_by(table.time.desc())\
                   .filter(table.log_index == log_index).first().response
+
+
+def get_user_contact_by_tpl_id(tpl_id):
+
+    session = Session(bind=falcon_portal_engine)
+
+    # 拿到uic
+    # select action.uic from tpl left join action on tpl.action_id = action.id where tpl.id = 2
+    uic = (session.query(Template, Action.uic)
+                  .join(Action, Template.action_id == Action.id)
+                  .filter(Template.id == tpl_id)
+                  .first()[1])
+    print(uic)
+
+    # 拿到所有的uid
+    # select uid from team left join rel_team_user on
+    #       team.id = rel_team_user.tid where team.name = '推荐系统RD'
+    session = Session(bind=uic_engine)
+    uids = (session.query(Team)
+                   .from_self(RelTeamUser.uid)
+                   .join(RelTeamUser, Team.id == RelTeamUser.tid)
+                   .filter(Team.name == uic).all())
+    uids = [item[0] for item in uids]
+    print(uids)
+
+    # 拿到所有的邮箱，以及手机号
+    # select email, phone from user where id in (1, 2, 3);
+    results = session.query(User.email, User.phone).filter(User.id.in_(uids)).all()
+    print(results)

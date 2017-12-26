@@ -4,7 +4,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from mihawk.snippets import dbapi
-from mihawk.models.log_mapping import LogMapping
+from mihawk.models.mihawk import LogMapping
 from mihawk.snippets.elastic import elastic_query
 from mihawk.snippets.airflow import default_args
 
@@ -30,7 +30,7 @@ def func(dag, *args, **kwargs):
     mapping = query_body['mapping']
 
     response = elastic_query(index, query_type, query_body)
-    properties = response[index]['mappings'][index]['properties']
+    properties = response[index]['mappings']['doc']['properties']
 
     log_mapping = table(log_index=index,
                         time=arrow.now().format('YYYY-MM-DD HH:mm:ss'),
@@ -49,7 +49,7 @@ dsl = {
     'query_type': 'mapping',
     'query_body': {
         'mapping': {
-            'actionTime': {'type': 'keyword'},
+            'actionTime': {'type': 'long'},
             'actionTimeStd': {'type': 'date'},
         }
     }

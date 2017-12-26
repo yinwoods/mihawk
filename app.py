@@ -1,63 +1,39 @@
+from apistar import http
 from apistar import Include, Route
 from apistar.frameworks.wsgi import WSGIApp as App
 from apistar.handlers import docs_urls, static_urls
 from apistar.backends import sqlalchemy_backend
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
 
-from mihawk.snippets.common import mysql_config
+from mihawk.snippets.alert import send_mail
+from mihawk.snippets.common import mihawk_config
 
 
 Base = declarative_base()
 
 
-class Rule(Base):
-    __tablename__ = 'Rule'
-    id = Column(Integer, primary_key=True)
-    type = Column(String)
-
-
-def welcome(name=None):
-    if name is None:
-        return {'message': 'Welcome to ApiStar!'}
-    return {'message': f'Welcome to Apistar!, {name}'}
-
-
-def append_rule():
-    # 添加一个新的监控规则
-    return {}
-
-
-def delete_rule(rule_id: str):
-    # 删除一个监控规则
-    return {}
-
-
-def query_rule(rule_id: str):
-    # 查询监控规则
-    return {}
-
-
-def change_rule(rule_id: str):
-    # 修改监控规则
-    return {}
+def alert(params: http.QueryParams):
+    title = f'{params.get("endpoint", None)} {params.get("metric", None)}报警'
+    message = dict(params)
+    mail_result = send_mail(title, message, 'yinchengtao@4paradigm.com')
+    response = {
+        'mail': mail_result,
+        'sms': 'NotImplemented',
+    }
+    return response
 
 
 settings = {
     "DATABASE": {
-        "URL": mysql_config['sql_alchemy_conn'],
+        "URL": mihawk_config['sql_alchemy_conn'],
         "METADATA": Base.metadata
     }
 }
 
 
 routes_table = [
-    Route('/', 'GET', welcome),
-    Route('/', 'POST', append_rule),
-    Route('/{rule_id}', 'DELETE', delete_rule),
-    Route('/{rule_id}', 'GET', query_rule),
-    Route('/{rule_id}', 'PUT', change_rule),
+    Route('/alert', 'GET', alert),
     Include('/docs', docs_urls),
     Include('/static', static_urls)
 ]
