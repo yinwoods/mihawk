@@ -44,7 +44,6 @@ def get_user_contact_by_tpl_id(tpl_id):
                   .join(Action, Template.action_id == Action.id)
                   .filter(Template.id == tpl_id)
                   .first()[1])
-    print(uic)
 
     # 拿到所有的uid
     # select uid from team left join rel_team_user on
@@ -55,7 +54,6 @@ def get_user_contact_by_tpl_id(tpl_id):
                    .join(RelTeamUser, Team.id == RelTeamUser.tid)
                    .filter(Team.name == uic).all())
     uids = [item[0] for item in uids]
-    print(uids)
 
     # 拿到所有的邮箱，以及手机号
     # select email, phone from user where id in (1, 2, 3);
