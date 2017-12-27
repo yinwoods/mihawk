@@ -8,16 +8,21 @@ def alert(params: http.QueryParams):
 
     try:
         assert "endpoint" in params.keys()
+        assert "exp_id" in params.keys()
         assert "metric" in params.keys()
         assert "tpl_id" in params.keys()
     except AssertionError as e:
         return {'error': 'endpoint and metric must in params'}
 
     title = f'{params["endpoint"]} {params["metric"]}报警'
-    message = dict(params)
-    user_infos = dbapi.get_user_contact_by_tpl_id(params["tpl_id"])
+    user_infos = dbapi.get_user_contact_by_tpl_id(params["tpl_id"], params["exp_id"])
 
     response = dict()
+
+    message = dict()
+    message.update({'机器': params['endpoint']})
+    message.update({'指标': params['metric']})
+    message.update({'标签': params['tags']})
 
     for name, email, phone in user_infos:
         mail_result = send_mail(title, message, email)

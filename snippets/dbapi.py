@@ -8,6 +8,7 @@ from mihawk.snippets.config import uic_config
 
 from mihawk.models.falcon_portal import Template
 from mihawk.models.falcon_portal import Action
+from mihawk.models.falcon_portal import Expression
 
 from mihawk.models.uic import Team
 from mihawk.models.uic import RelTeamUser
@@ -34,16 +35,26 @@ def latest_record(log_index, table):
                   .filter(table.log_index == log_index).first().response
 
 
-def get_user_contact_by_tpl_id(tpl_id):
+def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
 
     session = Session(bind=falcon_portal_engine)
 
-    # 拿到uic
-    # select action.uic from tpl left join action on tpl.action_id = action.id where tpl.id = 2
-    uic = (session.query(Template, Action.uic)
-                  .join(Action, Template.action_id == Action.id)
-                  .filter(Template.id == tpl_id)
-                  .first()[1])
+    if exp_id == 0:
+        # 拿到uic
+        # select action.uic from tpl left join action on tpl.action_id = action.id where tpl.id = 2
+        uic = (session.query(Template)
+                      .from_self(Action.uic)
+                      .join(Action, Template.action_id == Action.id)
+                      .filter(Template.id == tpl_id)
+                      .all())
+    else:
+        uic = (session.query(Expression)
+                      .from_self(Action.uic)
+                      .join(Action, Expression.action_id == Action.id)
+                      .filter(Expression.id == exp_id)
+                      .all())
+
+    uic = uic[0][0]
 
     # 拿到所有的uid
     # select uid from team left join rel_team_user on

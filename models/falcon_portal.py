@@ -25,3 +25,18 @@ class Template(Base):
     action_id = Column(Integer, nullable=False, default=0)
     create_user = Column(String(64), nullable=False, )
     create_at = Column(TIMESTAMP, nullable=False)
+
+
+class Expression(Base):
+    __tablename__ = 'expression'
+    id = Column(Integer, nullable=False, default=None, primary_key=True)
+    expression = Column(String(1024), nullable=False)
+    func = Column(String(16), nullable=False)
+    op = Column(String(8), nullable=False)
+    right_value = Column(String(16), nullable=False)
+    max_step = Column(Integer, nullable=False)
+    priority = Column(Integer, nullable=False)
+    note = Column(String(1024), nullable=False)
+    action_id = Column(Integer, nullable=False)
+    create_user = Column(String(64), nullable=False, )
+    pause = Column(Integer, nullable=False)
