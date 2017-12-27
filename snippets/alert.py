@@ -18,10 +18,10 @@ def send_mail(title, message, receiver):
 
     try:
         s.send_message(msg)
-        status = 'success'
+        status = 'Success'
     except smtplib.SMTPException as e:
         print(e)
-        status = 'failed'
+        status = 'Failed'
 
     s.quit()
 

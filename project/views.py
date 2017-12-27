@@ -16,14 +16,15 @@ def alert(params: http.QueryParams):
     title = f'{params["endpoint"]} {params["metric"]}报警'
     message = dict(params)
     user_infos = dbapi.get_user_contact_by_tpl_id(params["tpl_id"])
-    for email, phone in user_infos:
-        mail_result = send_mail(title, message, email)
 
-    # TODO
-    # 每个用户一个dict，表示邮件短信是否成功
-    response = {
-        'mail': mail_result,
-        'sms': 'NotImplemented',
-    }
+    response = dict()
+
+    for name, email, phone in user_infos:
+        mail_result = send_mail(title, message, email)
+        item = {
+            'mail': mail_result,
+            'sms': 'NotImplented'
+        }
+        response.update({name: item})
 
     return response

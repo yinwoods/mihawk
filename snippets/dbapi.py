@@ -57,5 +57,5 @@ def get_user_contact_by_tpl_id(tpl_id):
 
     # 拿到所有的邮箱，以及手机号
     # select email, phone from user where id in (1, 2, 3);
-    results = session.query(User.email, User.phone).filter(User.id.in_(uids)).all()
-    print(results)
+    results = session.query(User.name, User.email, User.phone).filter(User.id.in_(uids)).all()
+    return results

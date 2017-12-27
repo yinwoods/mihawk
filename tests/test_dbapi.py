@@ -2,14 +2,6 @@ from mihawk.snippets import dbapi
 from mihawk.models.mihawk import LogSpeed
 
 
-def test_commit():
-    dbapi.commit()
-
-
-def test_delete():
-    dbapi.delete()
-
-
 def test_latest_record(log_index, table):
     response = dbapi.latest_record(log_index, table)
     assert isinstance(response, dict)
@@ -19,7 +11,9 @@ def test_latest_record(log_index, table):
 
 def test_get_user_contact_by_tpl_id(tpl_id):
     result = dbapi.get_user_contact_by_tpl_id(tpl_id)
-    print(result)
+    assert isinstance(result, list)
+    assert isinstance(result[0], tuple)
+    assert len(result[0]) == 3
 
 
 if __name__ == '__main__':
