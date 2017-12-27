@@ -1,21 +1,8 @@
 from apistar.frameworks.wsgi import WSGIApp as App
 from apistar.backends import sqlalchemy_backend
 
-from sqlalchemy.ext.declarative import declarative_base
-
-from mihawk.snippets.common import mihawk_config
 from mihawk.project.routes import routes
-
-
-Base = declarative_base()
-
-
-settings = {
-    "DATABASE": {
-        "URL": mihawk_config['sql_alchemy_conn'],
-        "METADATA": Base.metadata
-    }
-}
+from mihawk.snippets.config import settings
 
 
 app = App(

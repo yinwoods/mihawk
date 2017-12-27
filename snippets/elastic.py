@@ -1,5 +1,5 @@
 import json
-from mihawk.snippets.common import elastic_config
+from mihawk.snippets.config import elastic_config
 from elasticsearch import Elasticsearch
 
 

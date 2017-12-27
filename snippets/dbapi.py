@@ -2,9 +2,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from mihawk.snippets.common import mihawk_config
-from mihawk.snippets.common import falcon_portal_config
-from mihawk.snippets.common import uic_config
+from mihawk.snippets.config import mihawk_config
+from mihawk.snippets.config import falcon_portal_config
+from mihawk.snippets.config import uic_config
 
 from mihawk.models.falcon_portal import Template
 from mihawk.models.falcon_portal import Action

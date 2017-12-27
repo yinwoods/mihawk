@@ -1,4 +1,4 @@
-from mihawk.snippets.common import mysql_config
+from mihawk.snippets.config import mysql_config
 
 
 # ---------------------------------------------------------
