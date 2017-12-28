@@ -19,10 +19,18 @@ def alert(params: http.QueryParams):
 
     response = dict()
 
+    tags = params['tags']
+    if tags == 'api:/zhulong/api/material':
+        return {
+            'staus': 'Not in monitor',
+            'mail': 'Failed',
+            'sms': 'NotImplented',
+        }
+
     message = dict()
     message.update({'机器': params['endpoint']})
     message.update({'指标': params['metric']})
-    message.update({'标签': params['tags']})
+    message.update({'标签': tags})
 
     for name, email, phone in user_infos:
         mail_result = send_mail(title, message, email)
