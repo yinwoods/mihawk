@@ -1,4 +1,4 @@
-from mihawk.snippets.elastic import elastic_query
+from mihawk.common.elastic import elastic_query
 
 
 def test_elastic_query_count():

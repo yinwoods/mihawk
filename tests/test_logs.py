@@ -2,7 +2,7 @@ import json
 import arrow
 
 from mihawk.models.logs import Logs
-from mihawk.snippets.dbapi import session
+from mihawk.common.dbapi import session
 
 
 if __name__ == '__main__':

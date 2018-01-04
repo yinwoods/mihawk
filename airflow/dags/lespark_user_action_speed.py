@@ -3,10 +3,10 @@ from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
-from mihawk.snippets import dbapi
+from mihawk.common import dbapi
 from mihawk.models.mihawk import LogSpeed
-from mihawk.snippets.elastic import elastic_query
-from mihawk.snippets.airflow import default_args
+from mihawk.common.elastic import elastic_query
+from mihawk.common.airflow import default_args
 
 
 table = LogSpeed

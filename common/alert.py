@@ -1,6 +1,6 @@
 import smtplib
 from email.mime.text import MIMEText
-from mihawk.snippets.config import mail_config
+from mihawk.common.config import mail_config
 
 
 def send_mail(title, message, receiver):

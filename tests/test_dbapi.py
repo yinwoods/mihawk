@@ -1,4 +1,4 @@
-from mihawk.snippets import dbapi
+from mihawk.common import dbapi
 from mihawk.models.mihawk import LogSpeed
 
 

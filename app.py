@@ -2,7 +2,7 @@ from apistar.frameworks.wsgi import WSGIApp as App
 from apistar.backends import sqlalchemy_backend
 
 from mihawk.project.routes import routes
-from mihawk.snippets.config import settings
+from mihawk.common.config import settings
 
 
 app = App(

@@ -1,7 +1,7 @@
 from apistar import http
 
-from mihawk.snippets import dbapi
-from mihawk.snippets.alert import send_mail
+from mihawk.common import dbapi
+from mihawk.common.alert import send_mail
 
 
 def alert(params: http.QueryParams):
