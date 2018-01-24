@@ -29,3 +29,6 @@ elastic_config = base_config['elastic']
 
 # 邮箱配置
 mail_config = base_config['mail']
+
+# 短信配置
+sms_config = base_config['sms']

@@ -15,7 +15,10 @@ def alert(params: http.QueryParams):
         return {'error': 'endpoint and metric must in params'}
 
     title = f'{params["endpoint"]} {params["metric"]}报警'
-    user_infos = dbapi.get_user_contact_by_tpl_id(params["tpl_id"], params["exp_id"])
+
+    tpl_id = int(params['tpl_id'])
+    exp_id = int(params['exp_id'])
+    user_infos = dbapi.get_user_contact_by_tpl_id(tpl_id, exp_id)
 
     response = dict()
 
