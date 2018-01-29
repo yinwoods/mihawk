@@ -27,14 +27,6 @@ def commit(log):
     session.close()
 
 
-def latest_record(log_index, table):
-    session = Session(bind=mihawk_engine)
-    assert 'time' in table.__dict__
-    assert 'log_index' in table.__dict__
-    return session.query(table).order_by(table.time.desc())\
-                  .filter(table.log_index == log_index).first().response
-
-
 def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
 
     session = Session(bind=falcon_portal_engine)
