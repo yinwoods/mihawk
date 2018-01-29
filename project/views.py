@@ -27,9 +27,7 @@ def alert(params: http.QueryParams):
 
     # latency_95th/api=/changba/api/recommend
     metric = (params['metric'] + '/' + params['tags'].replace(':', '=')).strip()
-    print(endpoint, metric, sep='|')
     event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric)
-    print(event_infos)
     event_info = event_infos[0]
 
     response = dict()
