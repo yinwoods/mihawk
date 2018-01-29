@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>用户接口请求量</title>
+    </head>
+
+    <body style="margin:0; padding:0; background-color:#F2F2F2;">
+        <center>
+            <center><h3>{{ params['endpoint'] + params['metric'] + '报警' }}</h3></center>
+            <table width="600" cellspacing="0" cellpadding="0" border="2" align="center">
+            <thead>
+                <tr>
+                    <th>机器</th>
+                    <th>指标</th>
+                    <th>标签</th>
+                </tr>
+            </thead>
+            <tr>
+                <td align="center" valign="top" style="padding:10px;">{{ params['endpoint'] }}</td>
+                <td align="center" valign="top" style="padding:10px;">{{ params['metric'] }}</td>
+                <td align="center" valign="top" style="padding:10px;">{{ params['tags'] }}</td>
+            </tr>
+            </table>
+        </center>
+    </body>
+</html>

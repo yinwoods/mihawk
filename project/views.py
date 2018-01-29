@@ -1,6 +1,8 @@
 from apistar import http
+from jinja2 import Template
 
 from mihawk.common import dbapi
+from mihawk.common.config import project_config
 from mihawk.common.alert import send_mail
 
 
@@ -22,17 +24,20 @@ def alert(params: http.QueryParams):
 
     response = dict()
 
-    message = dict()
-    message.update({'机器': params['endpoint']})
-    message.update({'指标': params['metric']})
-    message.update({'标签': params['tags']})
+    path = project_config['path']
 
     for name, email, phone in user_infos:
-        mail_result = send_mail(title, message, email)
-        item = {
-            'mail': mail_result,
-            'sms': 'NotImplented'
-        }
-        response.update({name: item})
+        with open(f'{path}/templates/alert.tmpl', 'r') as f:
+            t = ''.join(f.readlines())
+            t = Template(t)
+
+            message = t.render(params=params)
+            mail_result = send_mail(title, message, email)
+            # sms_result = send_mail(title, message, email)
+            item = {
+                'mail': mail_result,
+                'sms': 'NotImplented'
+            }
+            response.update({name: item})
 
     return response

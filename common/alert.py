@@ -18,7 +18,7 @@ def send_mail(title, message, receiver):
     s.starttls()
     s.login(mail_config['username'], mail_config['password'])
 
-    msg = MIMEText(f'<h1>{message}</h1>', 'html', 'utf-8')
+    msg = MIMEText(message, 'html', 'utf-8')
     msg['Subject'] = f'{title}'
     msg['From'] = mail_config['sender']
     msg['To'] = receiver
