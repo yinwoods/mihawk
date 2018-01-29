@@ -1,4 +1,5 @@
 from mihawk.app import app
+from mihawk.common.alert import send_sms
 from apistar import TestClient
 
 
@@ -11,5 +12,10 @@ def test_send_mail():
         assert value['sms'] == 'NotImplented'
 
 
+def test_send_sms():
+    send_sms('haha', '15652375651')
+
+
 if __name__ == '__main__':
-    test_send_mail()
+    # test_send_mail()
+    test_send_sms()

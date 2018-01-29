@@ -4,6 +4,7 @@ from jinja2 import Template
 from mihawk.common import dbapi
 from mihawk.common.config import project_config
 from mihawk.common.alert import send_mail
+from mihawk.common.alert import send_sms
 
 
 def alert(params: http.QueryParams):
@@ -31,12 +32,12 @@ def alert(params: http.QueryParams):
             t = ''.join(f.readlines())
             t = Template(t)
 
-            message = t.render(params=params)
-            mail_result = send_mail(title, message, email)
-            # sms_result = send_mail(title, message, email)
+            html_message = t.render(params=params)
+            mail_result = send_mail(title, html_message, email)
+            # sms_result = send_sms(params, phone)
             item = {
                 'mail': mail_result,
-                'sms': 'NotImplented'
+                'sms': 'sms_result'
             }
             response.update({name: item})
 
