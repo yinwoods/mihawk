@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from mihawk.common.config import mihawk_config
 from mihawk.common.config import falcon_portal_config
 from mihawk.common.config import uic_config
+from mihawk.common.config import alarms_config
 
 from mihawk.models.falcon_portal import Template
 from mihawk.models.falcon_portal import Action
@@ -14,10 +15,13 @@ from mihawk.models.uic import Team
 from mihawk.models.uic import RelTeamUser
 from mihawk.models.uic import User
 
+from mihawk.models.alarms import EventCases
+
 
 mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'])
 falcon_portal_engine = create_engine(falcon_portal_config['sql_alchemy_conn'])
 uic_engine = create_engine(uic_config['sql_alchemy_conn'])
+alarms_engine = create_engine(alarms_config['sql_alchemy_conn'])
 
 
 def commit(log):
@@ -63,3 +67,15 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
     # select email, phone from user where id in (1, 2, 3);
     results = session.query(User.name, User.email, User.phone).filter(User.id.in_(uids)).all()
     return results
+
+
+def get_infos_by_endpoint_metric_time(endpoint, metric):
+
+    session = Session(bind=alarms_engine)
+
+    events = (session.query(EventCases)
+                     .filter(EventCases.endpoint == endpoint)
+                     .filter(EventCases.metric == metric)
+                     .all())
+
+    return [(_.endpoint, _.metric, _.cond, _.note) for _ in events]

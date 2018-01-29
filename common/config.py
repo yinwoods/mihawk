@@ -27,6 +27,9 @@ falcon_portal_config = base_config['falcon_portal']
 # uic 配置
 uic_config = base_config['uic']
 
+# alarms 配置
+alarms_config = base_config['alarms']
+
 # 邮箱配置
 mail_config = base_config['mail']
 

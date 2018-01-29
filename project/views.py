@@ -23,6 +23,15 @@ def alert(params: http.QueryParams):
     exp_id = int(params['exp_id'])
     user_infos = dbapi.get_user_contact_by_tpl_id(tpl_id, exp_id)
 
+    endpoint = params['endpoint']
+
+    # latency_95th/api=/changba/api/recommend
+    metric = (params['metric'] + '/' + params['tags'].replace(':', '=')).strip()
+    print(endpoint, metric, sep='|')
+    event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric)
+    print(event_infos)
+    event_info = event_infos[0]
+
     response = dict()
 
     path = project_config['path']
@@ -32,7 +41,7 @@ def alert(params: http.QueryParams):
             t = ''.join(f.readlines())
             t = Template(t)
 
-            html_message = t.render(params=params)
+            html_message = t.render(params=event_info)
             mail_result = send_mail(title, html_message, email)
             # sms_result = send_sms(params, phone)
             item = {
