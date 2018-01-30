@@ -76,6 +76,7 @@ def get_infos_by_endpoint_metric_time(endpoint, metric):
     events = (session.query(EventCases)
                      .filter(EventCases.endpoint == endpoint)
                      .filter(EventCases.metric == metric)
+                     .filter(EventCases.status == 'PROBLEM')
                      .all())
 
     return [(_.endpoint, _.metric, _.cond, _.note) for _ in events]

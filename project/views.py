@@ -28,6 +28,9 @@ def alert(params: http.QueryParams):
     # latency_95th/api=/changba/api/recommend
     metric = (params['metric'] + '/' + params['tags'].replace(':', '=')).strip()
     event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric)
+    if len(event_infos) == 0:
+        return {'mail': 'not alert', 'sms': 'not alert'}
+
     event_info = event_infos[0]
 
     path = project_config['path']
