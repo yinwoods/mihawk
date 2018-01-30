@@ -25,30 +25,48 @@ def alert(params: http.QueryParams):
 
     endpoint = params['endpoint']
 
-    # latency_95th/api=/changba/api/recommend
+    # 过滤掉phpmyadmin类似的报警
+    if 'error_count' in params['metric'] and 'api/' not in params['metric']:
+        response = {
+            'mail': 'misstatement',
+            'sms': 'misstatement'
+        }
+        return response
+
     metric = (params['metric'] + '/' + params['tags'].replace(':', '=')).strip()
-    event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric)
+
+    # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
+    event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=10)
+
     if len(event_infos) == 0:
-        return {'mail': 'not alert', 'sms': 'not alert'}
+        return {'mail': 'misstatement', 'sms': 'misstatement'}
 
     event_info = event_infos[0]
 
-    path = project_config['path']
-
     emails = [user[1] for user in user_infos]
-    # phones = [user[2] for user in user_infos]
+    emails = ','.join(emails)
 
+    phones = [user[2] for user in user_infos]
+    phones = ','.join(phones)
+
+    path = project_config['path']
     with open(f'{path}/templates/alert.tmpl', 'r') as f:
+
         t = ''.join(f.readlines())
         t = Template(t)
 
         html_message = t.render(params=event_info)
-        emails = ','.join(emails)
-        mail_result = send_mail(title, html_message, emails)
-        # sms_result = send_sms(params, phones)
-        response = {
-            'mail': mail_result,
-            'sms': 'sms_result'
-        }
+
+        # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
+        if event_info[4] >= 3:
+            response = {
+                'mail': send_mail(title, html_message, emails),
+                'sms': send_sms(event_info, phones)
+            }
+        else:
+            response = {
+                'mail': send_mail(title, html_message, emails),
+                'sms': 'misstatement'
+            }
 
     return response

@@ -45,10 +45,10 @@ def send_sms(message, receivers):
     server_address = sms_config['server_address']
 
     state = {
-        "state": message["status"],
-        "host": message["endpoint"],
-        "service": message["metric"],
-        "item": message["tags"]
+        "host": message[0],
+        "service": message[1],
+        "item": message[2],
+        "state": message[3],
     }
 
     user_params = {
@@ -62,7 +62,6 @@ def send_sms(message, receivers):
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
-        print(url)
         response = requests.get(url, headers=headers)
         print(response.json())
         status = 'Success'

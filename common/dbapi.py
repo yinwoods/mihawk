@@ -1,4 +1,5 @@
-# 常用的数据库封装函数
+import arrow
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
@@ -16,6 +17,7 @@ from mihawk.models.uic import RelTeamUser
 from mihawk.models.uic import User
 
 from mihawk.models.alarms import EventCases
+from mihawk.models.alarms import Events
 
 
 mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'])
@@ -69,7 +71,7 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
     return results
 
 
-def get_infos_by_endpoint_metric_time(endpoint, metric):
+def get_infos_by_endpoint_metric_time(endpoint, metric, interval=10):
 
     session = Session(bind=alarms_engine)
 
@@ -79,4 +81,18 @@ def get_infos_by_endpoint_metric_time(endpoint, metric):
                      .filter(EventCases.status == 'PROBLEM')
                      .all())
 
-    return [(_.endpoint, _.metric, _.cond, _.note) for _ in events]
+    res = list()
+    for event in events:
+
+        now = arrow.now().format('YYYY-MM-DD HH:mm:ss')
+        ten_minutes_ago = arrow.now().replace(minutes=-interval).format('YYYY-MM-DD HH:mm:ss')
+
+        count = len(session.query(Events)
+                           .filter(Events.event_caseId == event.id)
+                           .filter(Events.status == 0)
+                           .filter(Events.timestamp >= ten_minutes_ago)
+                           .filter(Events.timestamp <= now)
+                           .all())
+        res.append((event.endpoint, event.metric, event.cond, event.note, count))
+
+    return res
