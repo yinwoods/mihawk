@@ -101,7 +101,6 @@ def compose_url(user_params, access_id, access_secret, server_address):
         'Timestamp': str(arrow.utcnow())
     }
     parameters.update(**user_params)
-    print(parameters)
     signature = compute_signature(parameters, access_id, access_secret)
     parameters['Signature'] = signature
     url = server_address + "/?" + urlencode(parameters)
