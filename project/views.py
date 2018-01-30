@@ -30,22 +30,22 @@ def alert(params: http.QueryParams):
     event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric)
     event_info = event_infos[0]
 
-    response = dict()
-
     path = project_config['path']
 
-    for name, email, phone in user_infos:
-        with open(f'{path}/templates/alert.tmpl', 'r') as f:
-            t = ''.join(f.readlines())
-            t = Template(t)
+    emails = [user[1] for user in user_infos]
+    # phones = [user[2] for user in user_infos]
 
-            html_message = t.render(params=event_info)
-            mail_result = send_mail(title, html_message, email)
-            # sms_result = send_sms(params, phone)
-            item = {
-                'mail': mail_result,
-                'sms': 'sms_result'
-            }
-            response.update({name: item})
+    with open(f'{path}/templates/alert.tmpl', 'r') as f:
+        t = ''.join(f.readlines())
+        t = Template(t)
+
+        html_message = t.render(params=event_info)
+        emails = ','.join(emails)
+        mail_result = send_mail(title, html_message, emails)
+        # sms_result = send_sms(params, phones)
+        response = {
+            'mail': mail_result,
+            'sms': 'sms_result'
+        }
 
     return response

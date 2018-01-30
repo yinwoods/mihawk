@@ -1,5 +1,6 @@
 from mihawk.app import app
 from mihawk.common.alert import send_sms
+from mihawk.common.alert import send_mail
 from apistar import TestClient
 
 
@@ -16,6 +17,12 @@ def test_send_sms():
     send_sms('haha', '15652375651')
 
 
+def test_common_send_mail():
+    send_mail('test', 'test-content', 'yinchengtao@4paradigm.com,yinwoods@qq.com')
+    pass
+
+
 if __name__ == '__main__':
     test_send_mail()
     # test_send_sms()
+    # test_common_send_mail()

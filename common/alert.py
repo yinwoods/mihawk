@@ -13,7 +13,7 @@ from mihawk.common.config import mail_config
 from mihawk.common.config import sms_config
 
 
-def send_mail(title, message, receiver):
+def send_mail(title, message, receivers):
 
     s = smtplib.SMTP()
     s.connect(host=mail_config['smtp_server'],
@@ -24,7 +24,7 @@ def send_mail(title, message, receiver):
     msg = MIMEText(message, 'html', 'utf-8')
     msg['Subject'] = f'{title}'
     msg['From'] = mail_config['sender']
-    msg['To'] = receiver
+    msg['To'] = receivers
 
     try:
         s.send_message(msg)
@@ -38,7 +38,7 @@ def send_mail(title, message, receiver):
     return status
 
 
-def send_sms(message, receiver):
+def send_sms(message, receivers):
 
     access_id = sms_config['access_id']
     access_secret = sms_config['access_secret']
@@ -54,7 +54,7 @@ def send_sms(message, receiver):
     user_params = {
         'Action': 'SingleSendSms',
         'ParamString': json.dumps(state),
-        'RecNum': receiver,
+        'RecNum': receivers,
         'SignName': '第四范式',
         'TemplateCode': 'SMS_25990449'
     }
