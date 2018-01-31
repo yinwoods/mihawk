@@ -1,5 +1,5 @@
-from apistar import http
 from jinja2 import Template
+from apistar import http
 
 from mihawk.common import dbapi
 from mihawk.common.config import project_config
@@ -70,3 +70,20 @@ def alert(params: http.QueryParams):
             }
 
     return response
+
+
+def notify_email(params: http.RequestData):
+    email_config = params['email']
+
+    path = project_config['path']
+    with open(f'{path}/templates/notify.tmpl', 'r') as f:
+        t = ''.join(f.readlines())
+        t = Template(t)
+        message = t.render(params=params)
+        print(message)
+        send_mail(email_config['subject'], message, email_config['to'])
+    pass
+
+
+def notify_sms(params: http.QueryParams):
+    pass
