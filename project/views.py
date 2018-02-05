@@ -80,10 +80,10 @@ def notify_email(params: http.RequestData):
         t = ''.join(f.readlines())
         t = Template(t)
         message = t.render(params=params)
-        print(message)
-        send_mail(email_config['subject'], message, email_config['to'])
-    pass
+        status = send_mail(email_config['subject'], message, email_config['to'])
+    return {'status': status}
 
 
-def notify_sms(params: http.QueryParams):
+def notify_sms(params: http.RequestData):
+    # TODO 短信接口
     pass

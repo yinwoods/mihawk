@@ -1,6 +1,6 @@
 export PYTHONPATH="$HOME:$PYTHONPATH"
 gunicorn \
-    -w 10 \
+    -w 3 \
     --timeout 120 \
     -b 0.0.0.0:22399 \
     --limit-request-line 0 \
