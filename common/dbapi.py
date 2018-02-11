@@ -20,10 +20,17 @@ from mihawk.models.alarms import EventCases
 from mihawk.models.alarms import Events
 
 
-mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'])
-falcon_portal_engine = create_engine(falcon_portal_config['sql_alchemy_conn'])
-uic_engine = create_engine(uic_config['sql_alchemy_conn'])
-alarms_engine = create_engine(alarms_config['sql_alchemy_conn'])
+mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'],
+                              pool_size=20, max_overflow=0)
+
+falcon_portal_engine = create_engine(falcon_portal_config['sql_alchemy_conn'],
+                                     pool_size=20, max_overflow=0)
+
+uic_engine = create_engine(uic_config['sql_alchemy_conn'],
+                           pool_size=20, max_overflow=0)
+
+alarms_engine = create_engine(alarms_config['sql_alchemy_conn'],
+                              pool_size=20, max_overflow=0)
 
 
 def commit(log):
