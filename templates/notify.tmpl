@@ -48,6 +48,10 @@
                 {% endfor %}
                 </table>
 
+                {% if "footer" in table%}
+                    <p style="color:#222222;">{{ table["footer"]["prefix-text"] }}<a href="{{ table['footer']['url'] }}">{{ table["footer"]["post-text"] }}</a></p>
+                {% endif %}
+
             {% endfor %}
         </center>
     </body>
