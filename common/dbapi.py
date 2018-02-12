@@ -21,23 +21,27 @@ from mihawk.models.alarms import Events
 
 
 mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'],
-                              pool_size=20, max_overflow=0)
+                              pool_size=100, max_overflow=0)
 
 falcon_portal_engine = create_engine(falcon_portal_config['sql_alchemy_conn'],
-                                     pool_size=20, max_overflow=0)
+                                     pool_size=200, max_overflow=0)
 
 uic_engine = create_engine(uic_config['sql_alchemy_conn'],
-                           pool_size=20, max_overflow=0)
+                           pool_size=200, max_overflow=0)
 
 alarms_engine = create_engine(alarms_config['sql_alchemy_conn'],
-                              pool_size=20, max_overflow=0)
+                              pool_size=200, max_overflow=0)
 
 
 def commit(log):
     session = Session(bind=mihawk_engine)
-    session.add(log)
-    session.commit()
-    session.close()
+    try:
+        session.add(log)
+        session.commit()
+    except Exception as e:
+        pass
+    finally:
+        session.close()
 
 
 def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
@@ -60,6 +64,7 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
                       .filter(Expression.id == exp_id)
                       .all())
 
+    session.close()
     uic = uic[0][0]
 
     # 拿到所有的uid
@@ -75,6 +80,7 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
     # 拿到所有的邮箱，以及手机号
     # select email, phone from user where id in (1, 2, 3);
     results = session.query(User.name, User.email, User.phone).filter(User.id.in_(uids)).all()
+    session.close()
     return results
 
 
@@ -101,5 +107,6 @@ def get_infos_by_endpoint_metric_time(endpoint, metric, interval=10):
                            .filter(Events.timestamp <= now)
                            .all())
         res.append((event.endpoint, event.metric, event.cond, event.note, count))
+    session.close()
 
     return res
