@@ -44,11 +44,11 @@ def commit(log):
         session.close()
 
 
-def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
+def get_user_contact_by_tpl_id(tpl_id, exp_id=0):
 
     session = Session(bind=falcon_portal_engine)
 
-    if exp_id is None:
+    if exp_id == 0:
         # 非expression，从templates过来
         # 拿到uic
         # select action.uic from tpl left join action on tpl.action_id = action.id where tpl.id = 2
@@ -77,9 +77,11 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
                    .filter(Team.name == uic).all())
     uids = [item[0] for item in uids]
 
-    # 拿到所有的邮箱，以及手机号
+    # 拿到所有的邮箱，手机号以及微信号
     # select email, phone from user where id in (1, 2, 3);
-    results = session.query(User.name, User.email, User.phone).filter(User.id.in_(uids)).all()
+    results = (session.query(User.name, User.email, User.phone, User.im)
+                      .filter(User.id.in_(uids))
+                      .all())
     session.close()
     return results
 
