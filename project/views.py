@@ -25,14 +25,6 @@ def alert(params: http.QueryParams):
 
     endpoint = params['endpoint']
 
-    # 过滤掉phpmyadmin类似的报警
-    if 'error_count' in params['metric'] and 'api/' not in params['metric']:
-        response = {
-            'mail': 'misstatement',
-            'sms': 'misstatement'
-        }
-        return response
-
     metric = (params['metric'] + '/' + params['tags'].replace(':', '=')).strip()
 
     # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
