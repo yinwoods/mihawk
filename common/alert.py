@@ -61,11 +61,11 @@ def send_sms(message, receivers):
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
-        requests.get(url, headers=headers)
-        status = 'Success'
+        response = requests.get(url, headers=headers)
+        return response.json()
     except Exception as e:
         status = 'Failed'
-    return status
+        return status
 
 
 def percent_encode(string):
