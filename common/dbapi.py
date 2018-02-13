@@ -21,16 +21,16 @@ from mihawk.models.alarms import Events
 
 
 mihawk_engine = create_engine(mihawk_config['sql_alchemy_conn'],
-                              pool_size=100, max_overflow=0)
+                              pool_size=100, max_overflow=100)
 
 falcon_portal_engine = create_engine(falcon_portal_config['sql_alchemy_conn'],
-                                     pool_size=200, max_overflow=0)
+                                     pool_size=200, max_overflow=100)
 
 uic_engine = create_engine(uic_config['sql_alchemy_conn'],
-                           pool_size=200, max_overflow=0)
+                           pool_size=200, max_overflow=100)
 
 alarms_engine = create_engine(alarms_config['sql_alchemy_conn'],
-                              pool_size=200, max_overflow=0)
+                              pool_size=200, max_overflow=100)
 
 
 def commit(log):
@@ -48,7 +48,7 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
 
     session = Session(bind=falcon_portal_engine)
 
-    if exp_id == 0:
+    if exp_id is None:
         # 非expression，从templates过来
         # 拿到uic
         # select action.uic from tpl left join action on tpl.action_id = action.id where tpl.id = 2
@@ -64,6 +64,7 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
                       .filter(Expression.id == exp_id)
                       .all())
 
+    print(uic)
     session.close()
     uic = uic[0][0]
 

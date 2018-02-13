@@ -9,7 +9,8 @@ def test_get_user_contact_by_tpl_id(tpl_id):
 
 
 def test_get_infos_by_endpoint_metric_time():
-    result = dbapi.get_infos_by_endpoint_metric_time('aws-prophet-recom05', 'latency_95th/api=/changba/api/recommend')
+    result = dbapi.get_infos_by_endpoint_metric_time('aws-prophet-recom05',
+                                                     'latency_95th/api=/changba/api/recommend')
     print(result)
 
 
