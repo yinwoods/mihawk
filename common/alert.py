@@ -30,7 +30,6 @@ def send_mail(title, message, receivers):
         s.send_message(msg)
         status = 'Success'
     except smtplib.SMTPException as e:
-        print(e)
         status = 'Failed'
 
     s.quit()
@@ -62,11 +61,9 @@ def send_sms(message, receivers):
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
-        response = requests.get(url, headers=headers)
-        print(response.json())
+        requests.get(url, headers=headers)
         status = 'Success'
     except Exception as e:
-        print(e)
         status = 'Failed'
     return status
 

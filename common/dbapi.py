@@ -64,7 +64,6 @@ def get_user_contact_by_tpl_id(tpl_id, exp_id=None):
                       .filter(Expression.id == exp_id)
                       .all())
 
-    print(uic)
     session.close()
     uic = uic[0][0]
 
