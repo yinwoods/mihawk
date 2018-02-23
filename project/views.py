@@ -18,22 +18,21 @@ def alert(params: http.QueryParams):
     except AssertionError as e:
         return {"error": "endpoint and metric must in params"}
 
-    title = f'{params["endpoint"]} {params["metric"]}报警'
+    endpoint = params["endpoint"]
+    metric = params["metric"]
+    tags = params["tags"]
+
+    title = f'{endpoint} {metric}报警'
 
     tpl_id = int(params["tpl_id"])
     exp_id = int(params["exp_id"])
     user_infos = dbapi.get_user_contact_by_tpl_id(tpl_id, exp_id)
 
-    endpoint = params["endpoint"]
-
-    metric = params["metric"]
-    tags = params["tags"]
-
     # 目前的415错误先过滤掉，等下一个版本发布后再恢复
-    if tags == "api=__serv__,errcode=415" or tags == "api=/dangdang/api/config,errcode=415":
+    if tags == "api:__serv__,errcode=415" or tags == "api:/dangdang/api/config,errcode=415":
         return {"mail": "misstatement", "sms": "misstatement", "im": "misstatement"}
 
-    metric = (params["metric"] + "/" + params["tags"].replace(":", "=")).strip()
+    metric = (metric + "/" + tags.replace(":", "=")).strip()
 
     # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
     event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=10)
