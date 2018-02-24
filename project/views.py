@@ -31,6 +31,9 @@ def alert(params: http.QueryParams):
     # 目前的415错误先过滤掉，等下一个版本发布后再恢复
     if tags == "api=__serv__,errcode=415" or tags == "api=/dangdang/api/config,errcode=415":
         return {"mail": "misstatement", "sms": "misstatement", "im": "misstatement"}
+    # 目前的400错误先过滤掉，等待世举查明原因
+    if tags == "api=__serv__,errcode=400" or tags == "api=/dangdang/api/log,errcode=400":
+        return {"mail": "misstatement", "sms": "misstatement", "im": "misstatement"}
 
     metric = metric + "/" + tags
 
