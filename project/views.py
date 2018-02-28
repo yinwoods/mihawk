@@ -45,9 +45,6 @@ def alert(params: http.QueryParams):
 
     event_info = event_infos[0]
 
-    emails = [user[1] for user in user_infos]
-    emails = ",".join(emails)
-
     phones = [user[2] for user in user_infos]
     phones = ",".join(phones)
 
@@ -65,13 +62,11 @@ def alert(params: http.QueryParams):
         # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
         if event_info[4] >= 3:
             response = {
-                "mail": send_mail(title, html_message, emails),
                 "sms": send_sms(event_info, phones),
                 "im": send_wechat(event_info, ims)
             }
         else:
             response = {
-                "mail": send_mail(title, html_message, emails),
                 "sms": "misstatement",
                 "im": send_wechat(event_info, ims)
             }
