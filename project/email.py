@@ -4,7 +4,7 @@ from mihawk.common.alert import send_mail
 from mihawk.project.views import notify_email
 
 
-def notify(session: http.Session, params: http.RequestData):
+def notify(params: http.RequestData):
 
     emails, subject, content = params["tos"], params["subject"], params["content"]
     content = parse_content(content)

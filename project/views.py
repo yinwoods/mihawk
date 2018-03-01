@@ -32,16 +32,19 @@ def alert(params: http.QueryParams):
     # 目前的400错误先过滤掉，等待世举查明原因
     if tags == "api=__serv__,errcode=400" or tags == "api=/dangdang/api/log,errcode=400":
         return {"sms": "misstatement", "im": "misstatement"}
+    # zhulong 7k7k暂时不报警
+    if "zhulong" in tags or "7k7k" in tags:
+        return {"sms": "misstatement", "im": "misstatement"}
 
     metric = metric + "/" + tags
 
     # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
-    event_infos = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=10)
+    events = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=10)
 
-    if len(event_infos) == 0:
+    if len(events) == 0:
         return {"sms": "misstatement", "im": "misstatement"}
 
-    event_info = event_infos[0]
+    event_info = events[0]
 
     phones = [user[2] for user in user_infos]
     phones = ",".join(phones)
@@ -50,7 +53,7 @@ def alert(params: http.QueryParams):
     ims = ",".join(ims)
 
     # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
-    if event_info[4] >= 3:
+    if event_info["count"] >= 3:
         response = {
             "sms": send_sms(event_info, phones),
             "im": send_wechat(event_info, ims)
@@ -77,5 +80,12 @@ def notify_email(params: http.RequestData):
 
 
 def notify_sms(params: http.RequestData):
-    # TODO 短信接口
+    sms_config = params["sms"]
+    receivers = sms_config["to"]
+    keys = ["host", "service", "item", "state"]
+    message = {key: sms_config[key] for key in keys}
+    return {"status": send_sms(message, receivers)}
+
+
+def notify_im(params: http.RequestData):
     pass

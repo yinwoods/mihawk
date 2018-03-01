@@ -15,8 +15,8 @@ from mihawk.common.config import sms_config
 
 
 def send_wechat(message, receivers):
-    message = [f"机器：{message[0]}", f"服务: {message[1]}",
-               f"指标: {message[2]}", f"标记: {message[3]}"]
+    message = [f"机器：{message['host']}", f"服务: {message['service']}",
+               f"指标: {message['item']}", f"标记: {message['state']}"]
     message = "\n".join(message)
     payload = f"tos={receivers}&content={message}".encode("utf8")
     headers = {
@@ -57,10 +57,10 @@ def send_sms(message, receivers):
     server_address = sms_config["server_address"]
 
     state = {
-        "host": message[0],
-        "service": message[1],
-        "item": message[2],
-        "state": message[3],
+        "host": message.get("host"),
+        "service": message.get("service"),
+        "item": message.get("item"),
+        "state": message.get("state"),
     }
 
     user_params = {

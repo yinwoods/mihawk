@@ -108,7 +108,13 @@ def get_infos_by_endpoint_metric_time(endpoint, metric, interval=10):
                            .filter(Events.timestamp >= ten_minutes_ago)
                            .filter(Events.timestamp <= now)
                            .all())
-        res.append((event.endpoint, event.metric, event.cond, event.note, count))
+        res.append({
+            "host": event.endpoint,
+            "service": event.metric,
+            "item": event.cond,
+            "state": event.note,
+            "count": count
+        })
     session.close()
 
     return res
