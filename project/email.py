@@ -8,6 +8,9 @@ def notify(params: http.RequestData):
     subject, content = params["subject"], params["content"]
     content = parse_content(content)
 
+    if content["报警级别"] == "OK":
+        return {"email": "misstatement"}
+
     table = {"content": [["属性", "值"]]}
     subject = table["title"] = f"{content.get('机器')} {content.get('标记')} 报警"
 
@@ -28,8 +31,7 @@ def notify(params: http.RequestData):
 
 
 def parse_content(content):
-    res = dict()
-    content = content[1:-1].split("\r\n")
+    content = content[:-1].split("\r\n")
 
     maps = {
         "endpoint": "机器",
@@ -41,6 +43,7 @@ def parse_content(content):
         "current": "当前报警次数"
     }
 
+    res = dict()
     res["报警级别"], res["状态"] = content[:2]
 
     res["规则地址"] = f"<a href={content[-1]}>{content[-1]}</a>" \
