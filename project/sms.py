@@ -9,13 +9,13 @@ def notify(params: http.RequestData):
     content = params["content"]
     content = parse_content(content)
 
+    if content.get("状态", "") == "OK":
+        return {"sms": "misstatement"}
+
     endpoint = content.get("机器").strip()
     metric = content.get("指标").strip()
     tags = content.get("标签").strip().replace(":", "=")
     metric = metric + "/" + tags
-
-    if content.get("状态", "") == "OK":
-        return {"sms": "misstatement"}
 
     res = {
         "sms": {

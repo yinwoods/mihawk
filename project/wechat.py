@@ -7,22 +7,22 @@ def notify(params: http.RequestData):
     content = params["content"]
     content = parse_content(content)
 
+    if content.get("状态", "") == "OK":
+        return {"wechat": "misstatement"}
+
     endpoint = content.get("机器").strip()
     metric = content.get("指标").strip()
     tags = content.get("标签").strip().replace(":", "=")
     metric = metric + "/" + tags
 
-    if content.get("状态", "") == "OK":
-        return {"wechat": "misstatement"}
-
-    # not now    
+    # not now
     return {"wechat": "misstatement"}
 
     res = {
         "wechat": {
             "to": params["tos"],
             "subject": f"{content.get('机器')} {content.get('标记')} 报警",
-            "host": content.get("机器"),
+            "host": endpoint,
             "service": metric,
             "item": content.get("表达式"),
             "state": content.get("标记")

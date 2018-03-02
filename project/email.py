@@ -44,7 +44,7 @@ def parse_content(content):
     }
 
     res = dict()
-    res["报警级别"], res["状态"] = content[:2]
+    res["状态"], res["报警级别"] = content[:2]
 
     res["规则地址"] = f"<a href={content[-1]}>{content[-1]}</a>" \
         if content[-1].startswith("http") else ""
