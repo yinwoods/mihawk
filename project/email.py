@@ -1,12 +1,11 @@
 from apistar import http
 
-from mihawk.common.alert import send_mail
 from mihawk.project.views import notify_email
 
 
 def notify(params: http.RequestData):
 
-    emails, subject, content = params["tos"], params["subject"], params["content"]
+    subject, content = params["subject"], params["content"]
     content = parse_content(content)
 
     table = {"content": [["属性", "值"]]}
@@ -42,9 +41,13 @@ def parse_content(content):
         "current": "当前报警次数"
     }
 
-    res["状态"], res["报警级别"] = content[:2]
-    res["规则地址"] = f"<a href={content[-1]}>{content[-1]}</a>" if content[-1].startswith("http") else ""
-    res["规则地址"] = res["规则地址"].replace("http://127.0.0.1:8086", "https://recsys-falcon.4paradigm.com")
+    res["报警级别"], res["状态"] = content[:2]
+
+    res["规则地址"] = f"<a href={content[-1]}>{content[-1]}</a>" \
+        if content[-1].startswith("http") else ""
+
+    res["规则地址"] = res["规则地址"].replace(
+            "http://127.0.0.1:8086", "https://recsys-falcon.4paradigm.com")
 
     for item in content[2:-1]:
         key, value = item.split(":", 1)

@@ -1,11 +1,9 @@
 from apistar import http
 
-from mihawk.common import dbapi
-from mihawk.project.views import notify_sms
+from mihawk.project.views import notify_wechat
 
 
 def notify(params: http.RequestData):
-
     content = params["content"]
     content = parse_content(content)
 
@@ -15,10 +13,13 @@ def notify(params: http.RequestData):
     metric = metric + "/" + tags
 
     if content.get("状态", "") == "OK":
-        return {"sms": "misstatement"}
+        return {"wechat": "misstatement"}
+
+    # not now    
+    return {"wechat": "misstatement"}
 
     res = {
-        "sms": {
+        "wechat": {
             "to": params["tos"],
             "subject": f"{content.get('机器')} {content.get('标记')} 报警",
             "host": content.get("机器"),
@@ -28,15 +29,7 @@ def notify(params: http.RequestData):
         }
     }
 
-    # 10分钟内出现3次或3次以上才报警
-    events = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=100)
-    if len(events) == 0:
-        return {"sms": "misstatement"}
-
-    event = events[0]
-    response = dict()
-    response["sms"] = notify_sms(res) if event["count"] > 3 else "misstatement"
-    return response
+    return {"wechat": notify_wechat(res)}
 
 
 def parse_content(content):

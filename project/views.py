@@ -28,13 +28,13 @@ def alert(params: http.QueryParams):
 
     # 目前的415错误先过滤掉，等下一个版本发布后再恢复
     if tags == "api=__serv__,errcode=415" or tags == "api=/dangdang/api/config,errcode=415":
-        return {"sms": "misstatement", "im": "misstatement"}
+        return {"sms": "misstatement", "wechat": "misstatement"}
     # 目前的400错误先过滤掉，等待世举查明原因
     if tags == "api=__serv__,errcode=400" or tags == "api=/dangdang/api/log,errcode=400":
-        return {"sms": "misstatement", "im": "misstatement"}
+        return {"sms": "misstatement", "wechat": "misstatement"}
     # zhulong 7k7k暂时不报警
     if "zhulong" in tags or "7k7k" in tags:
-        return {"sms": "misstatement", "im": "misstatement"}
+        return {"sms": "misstatement", "wechat": "misstatement"}
 
     metric = metric + "/" + tags
 
@@ -42,26 +42,26 @@ def alert(params: http.QueryParams):
     events = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=10)
 
     if len(events) == 0:
-        return {"sms": "misstatement", "im": "misstatement"}
+        return {"sms": "misstatement", "wechat": "misstatement"}
 
     event_info = events[0]
 
     phones = [user[2] for user in user_infos]
     phones = ",".join(phones)
 
-    ims = [user[3] for user in user_infos]
-    ims = ",".join(ims)
+    wechats = [user[3] for user in user_infos]
+    wechats = ",".join(wechats)
 
     # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
     if event_info["count"] >= 3:
         response = {
             "sms": send_sms(event_info, phones),
-            "im": send_wechat(event_info, ims)
+            "wechat": send_wechat(event_info, wechats)
         }
     else:
         response = {
             "sms": "misstatement",
-            "im": send_wechat(event_info, ims)
+            "wechat": send_wechat(event_info, wechats)
         }
 
     return response
@@ -87,5 +87,9 @@ def notify_sms(params: http.RequestData):
     return {"status": send_sms(message, receivers)}
 
 
-def notify_im(params: http.RequestData):
-    pass
+def notify_wechat(params: http.RequestData):
+    wechat_config = params["wechat"]
+    receivers = wechat_config["to"]
+    keys = ["host", "service", "item", "state"]
+    message = {key: wechat_config[key] for key in keys}
+    return {"status": send_wechat(message, receivers)}

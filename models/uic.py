@@ -16,7 +16,7 @@ class Team(Base):
     id = Column(Integer, nullable=False, default=None, primary_key=True)
     name = Column(String(64), nullable=False)
     resume = Column(String(255), nullable=False)
-    creator = Column(String(64), nullable=False, )
+    creator = Column(String(64), nullable=False)
     created = Column(TIMESTAMP, nullable=False)
 
 
