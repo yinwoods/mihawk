@@ -8,6 +8,7 @@ from mihawk.project import wechat
 from mihawk.project.views import alert
 from mihawk.project.views import notify_email
 from mihawk.project.views import notify_sms
+from mihawk.project.views import notify_wechat
 
 routes = [
     Route("/email", "POST", name="email", view=email.notify),
@@ -16,6 +17,7 @@ routes = [
     Route("/alert", "GET", alert),
     Route("/notify/email", "POST", notify_email),
     Route("/notify/sms", "POST", notify_sms),
+    Route("/notify/wechat", "POST", notify_wechat),
     Include("/docs", docs_urls),
     Include("/static", static_urls)
 ]

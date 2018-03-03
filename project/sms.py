@@ -17,6 +17,15 @@ def notify(params: http.RequestData):
     tags = content.get("标签").strip().replace(":", "=")
     metric = metric + "/" + tags
 
+    if tags == "api=__serv__,errcode=415" or tags == "api=/dangdang/api/config,errcode=415":
+        return {"sms": "misstatement"}
+    # 目前的400错误先过滤掉，等待世举查明原因
+    if tags == "api=__serv__,errcode=400" or tags == "api=/dangdang/api/log,errcode=400":
+        return {"sms": "misstatement"}
+    # zhulong 7k7k暂时不报警
+    if "zhulong" in tags or "7k7k" in tags:
+        return {"sms": "misstatement"}
+
     res = {
         "sms": {
             "to": params["tos"],
