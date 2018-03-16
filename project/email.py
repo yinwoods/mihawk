@@ -8,7 +8,7 @@ def notify(params: http.RequestData):
     subject, content = params["subject"], params["content"]
     content = parse_content(content)
 
-    if content["状态"] == "OK":
+    if content["状态"] == "OK" or "errcode=404" in content["标签"]:
         return {"email": "misstatement"}
 
     table = {"content": [["属性", "值"]]}

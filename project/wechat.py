@@ -15,6 +15,10 @@ def notify(params: http.RequestData):
     tags = content.get("标签").strip().replace(":", "=")
     metric = metric + "/" + tags
 
+    # 过滤404
+    if "errcode=404" in metric:
+        return {"wechat": "misstatement"}
+
     # not now
     return {"wechat": "misstatement"}
 

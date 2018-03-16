@@ -17,6 +17,8 @@ def notify(params: http.RequestData):
     tags = content.get("标签").strip().replace(":", "=")
     metric = metric + "/" + tags
 
+    if "errcode=404" in metric:
+        return {"sms": "misstatement"}
     if tags == "api=__serv__,errcode=415" or tags == "api=/dangdang/api/config,errcode=415":
         return {"sms": "misstatement"}
     # 目前的400错误先过滤掉，等待世举查明原因

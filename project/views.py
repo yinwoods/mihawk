@@ -37,6 +37,8 @@ def alert(params: http.QueryParams):
         return {"sms": "misstatement", "wechat": "misstatement"}
 
     metric = metric + "/" + tags
+    if "errcode=404" in metric:
+        return {"sms": "misstatement", "wechat": "misstatement"}
 
     # 仅当10分钟内相同报警出现3次或3次以上才会触发短信报警
     events = dbapi.get_infos_by_endpoint_metric_time(endpoint, metric, interval=10)
